@@ -7,6 +7,7 @@ package auth;
 
 service Auth {
   rpc Login (_LoginRequest) returns (stream _LoginResponse) {}
+  rpc CreateApiToken (_CreateApiTokenRequest) returns (_CreateApiTokenResponse) {}
 }
 
 message _LoginRequest {
@@ -48,4 +49,41 @@ message _LoginResponse {
   message Message {
     string text = 1;
   }
+}
+
+message _CreateApiTokenRequest {
+  uint32 validity_seconds = 1;
+  CacheResources cache_resources = 2;
+  Role role = 3;
+}
+
+message CacheResources {
+  oneof name {
+    string regex = 2;
+    ResourceNames names = 3;
+  }
+}
+
+message ResourceNames {
+  repeated string names = 1;
+}
+
+message Role {
+  enum RoleType {
+    UNKNOWN = 0;
+    ADMIN = 1;
+    READ_WRITE = 2;
+  }
+  oneof role {
+    RoleType role_type = 1;
+    string role_id = 2;
+  }
+}
+
+message _CreateApiTokenResponse {
+  Token token = 1;
+}
+
+message Token {
+  string token = 1;
 }
